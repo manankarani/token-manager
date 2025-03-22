@@ -1,0 +1,162 @@
+openapi: 3.0.0
+info:
+  title: Token Management API
+  description: API for managing and assigning tokens in a distributed system.
+  version: 1.0.0
+  contact:
+    name: Manan Karani
+    email: manan.karani@example.com
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8080/
+    description: Local development server
+
+paths:
+  /tokens/generate:
+    post:
+      summary: Generate new tokens
+      description: Generates unique tokens and adds them to the pool
+      tags:
+        - Tokens
+      responses:
+        '200':
+          description: Successfully generated tokens
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "randomtoken"
+        '500':
+          description: Internal Server Error
+
+  /tokens/assign:
+    post:
+      summary: Assign an available token
+      description: Assigns a random available token and locks it for use
+      tags:
+        - Tokens
+      responses:
+        '200':
+          description: Token assigned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "random-token"
+        '404':
+          description: No available tokens
+
+  /tokens/unblock/{token}:
+    post:
+      summary: Unblock a token
+      description: Moves a token back to the pool so it can be assigned again
+      tags:
+        - Tokens
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token to unblock
+      responses:
+        '200':
+          description: Token unblocked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token unblocked"
+                  token:
+                    type: string
+                    example: "random-token"
+        '404':
+          description: Token not found
+
+  /tokens/delete/{token}:
+    delete:
+      summary: Delete a token
+      description: Permanently removes a token from the pool
+      tags:
+        - Tokens
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token to delete
+      responses:
+        '200':
+          description: Token deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token deleted"
+                  token:
+                    type: string
+                    example: "random-token"
+        '404':
+          description: Token not found
+
+  /tokens/keep-alive/{token}:
+    post:
+      summary: Keep a token alive
+      description: Refreshes the expiration of an assigned token
+      tags:
+        - Tokens
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token to keep alive
+      responses:
+        '200':
+          description: Token kept alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token kept alive"
+        '404':
+          description: Token not found
+
+  /tokens/available:
+    get:
+      summary: Get available tokens
+      description: Lists all tokens currently available for assignment
+      tags:
+        - Tokens
+      responses:
+        '200':
+          description: List of available tokens
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    type: array
+                    items:
+                      type: string
+                    example: ["token1", "token2"]

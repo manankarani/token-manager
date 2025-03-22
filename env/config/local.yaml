@@ -1,0 +1,11 @@
+# The keys are case-sensitive, if modified please make corresponding changes in env.go schema
+Server:
+    ENV: local
+    Port: 8080
+    HandlerTimeout: 60000 # Millisecond
+    InactiveRouteHandlerTimeout: 120000 # Millisecond
+    LogLevel: DEBUG
+
+Redis:
+    Host: redis
+    Port: 6379
